@@ -15,13 +15,14 @@
         .links a:hover { background: rgba(255,255,255,0.15); border-color: #fff; transform: translateY(-2px); }
         .footer-text { margin-top: 40px; font-size: 0.8rem; color: rgba(255,255,255,0.4); letter-spacing: 1px; }
 
-        /* 密码锁样式 */
-        #lock-screen { display: flex; flex-direction: column; align-items: center; }
-        #lock-screen input { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3); color: #fff; padding: 12px 20px; border-radius: 50px; font-size: 1rem; text-align: center; outline: none; width: 200px; margin: 20px 0; }
-        #lock-screen input::placeholder { color: rgba(255,255,255,0.5); }
-        #lock-screen button { background: #e94560; border: none; color: #fff; padding: 12px 40px; border-radius: 50px; font-size: 1rem; cursor: pointer; transition: background 0.3s; }
-        #lock-screen button:hover { background: #c23152; }
+        /* 登录框样式 */
+        #login-screen input { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3); color: #fff; padding: 12px 20px; border-radius: 50px; font-size: 1rem; text-align: center; outline: none; width: 200px; margin: 8px 0; display: block; margin-left: auto; margin-right: auto; }
+        #login-screen input::placeholder { color: rgba(255,255,255,0.5); }
+        #login-screen button { background: #e94560; border: none; color: #fff; padding: 12px 40px; border-radius: 50px; font-size: 1rem; cursor: pointer; transition: background 0.3s; margin-top: 15px; }
+        #login-screen button:hover { background: #c23152; }
         .error-msg { color: #e94560; font-size: 0.9rem; margin-top: 10px; min-height: 20px; }
+        #login-screen h2 { margin-bottom: 20px; }
+        #login-screen label { display: block; text-align: left; width: 210px; margin: 5px auto 2px; font-size: 0.9rem; color: rgba(255,255,255,0.7); }
 
         /* 内容默认隐藏 */
         #main-content { display: none; animation: fadeIn 0.5s ease; }
@@ -29,17 +30,22 @@
     </style>
 </head>
 <body>
-    <div class="card" id="lock-screen">
-        <div class="avatar">🔒</div>
-        <h2>请输入密码</h2>
+    <!-- 登录界面 -->
+    <div class="card" id="login-screen">
+        <div class="avatar">🔐</div>
+        <h2>请登录</h2>
+        <label for="username-input">用户名</label>
+        <input type="text" id="username-input" placeholder="输入用户名">
+        <label for="password-input">密码</label>
         <input type="password" id="password-input" placeholder="输入密码">
-        <button onclick="checkPassword()">进入</button>
+        <button onclick="checkLogin()">进入</button>
         <div class="error-msg" id="error-msg"></div>
     </div>
 
+    <!-- 主内容（登录后可见） -->
     <div class="card" id="main-content">
         <div class="avatar">🚀</div>
-        <h1>你的名字</h1>
+        <h1 id="welcome-name">你好</h1>
         <p class="tagline">
             这里写一句自我介绍或自己喜欢的话。<br>
             比如：探索世界的好奇心。
@@ -52,22 +58,28 @@
     </div>
 
     <script>
-        // 在这里修改密码（引号内的内容）
-        const CORRECT_PASSWORD = "2026hello";
+        // ====== 在这里添加用户，格式： { "用户名": "密码" } ======
+        const USERS = {
+            "alice": "123",
+            "bob": "hello2026",
+            "我": "mima"
+        };
 
-        function checkPassword() {
-            const input = document.getElementById("password-input").value;
-            if (input === CORRECT_PASSWORD) {
-                document.getElementById("lock-screen").style.display = "none";
+        function checkLogin() {
+            const username = document.getElementById("username-input").value.trim();
+            const password = document.getElementById("password-input").value;
+            if (USERS[username] && USERS[username] === password) {
+                document.getElementById("login-screen").style.display = "none";
                 document.getElementById("main-content").style.display = "block";
+                document.getElementById("welcome-name").innerText = "欢迎，" + username;
             } else {
-                document.getElementById("error-msg").innerText = "密码不对，再试试看～";
+                document.getElementById("error-msg").innerText = "用户名或密码不对，再试试～";
                 document.getElementById("password-input").value = "";
             }
         }
         // 按回车也可提交
         document.getElementById("password-input").addEventListener("keypress", function(e) {
-            if (e.key === "Enter") checkPassword();
+            if (e.key === "Enter") checkLogin();
         });
     </script>
 </body>
