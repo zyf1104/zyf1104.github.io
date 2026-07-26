@@ -5,86 +5,39 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>我的小站</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body {
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            color: #ffffff;
-        }
-        .card {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 60px 40px;
-            text-align: center;
-            max-width: 450px;
-            width: 90%;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-            border: 1px solid rgba(255,255,255,0.1);
-            animation: fadeIn 1.5s ease;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .avatar {
-            width: 100px;
-            height: 100px;
-            background: linear-gradient(45deg, #e94560, #f5a623);
-            border-radius: 50%;
-            margin: 0 auto 25px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 40px;
-            box-shadow: 0 10px 30px rgba(233, 69, 96, 0.4);
-        }
-        h1 {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 10px;
-            letter-spacing: 2px;
-        }
-        .tagline {
-            font-size: 1.1rem;
-            color: rgba(255,255,255,0.7);
-            margin-bottom: 30px;
-            line-height: 1.6;
-        }
-        .links a {
-            display: inline-block;
-            margin: 0 10px;
-            color: #ffffff;
-            text-decoration: none;
-            border: 1px solid rgba(255,255,255,0.3);
-            padding: 10px 25px;
-            border-radius: 50px;
-            font-size: 0.95rem;
-            transition: all 0.3s ease;
-        }
-        .links a:hover {
-            background: rgba(255,255,255,0.15);
-            border-color: #ffffff;
-            transform: translateY(-2px);
-        }
-        .footer-text {
-            margin-top: 40px;
-            font-size: 0.8rem;
-            color: rgba(255,255,255,0.4);
-            letter-spacing: 1px;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); min-height: 100vh; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; color: #ffffff; display: flex; justify-content: center; align-items: center; }
+        .card { background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); border-radius: 20px; padding: 60px 40px; text-align: center; max-width: 450px; width: 90%; box-shadow: 0 20px 50px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); }
+        .avatar { width: 100px; height: 100px; background: linear-gradient(45deg, #e94560, #f5a623); border-radius: 50%; margin: 0 auto 25px; display: flex; align-items: center; justify-content: center; font-size: 40px; box-shadow: 0 10px 30px rgba(233,69,96,0.4); }
+        h1 { font-size: 2.5rem; font-weight: 700; margin-bottom: 10px; letter-spacing: 2px; }
+        .tagline { font-size: 1.1rem; color: rgba(255,255,255,0.7); margin-bottom: 30px; line-height: 1.6; }
+        .links a { display: inline-block; margin: 0 10px; color: #fff; text-decoration: none; border: 1px solid rgba(255,255,255,0.3); padding: 10px 25px; border-radius: 50px; font-size: 0.95rem; transition: all 0.3s; }
+        .links a:hover { background: rgba(255,255,255,0.15); border-color: #fff; transform: translateY(-2px); }
+        .footer-text { margin-top: 40px; font-size: 0.8rem; color: rgba(255,255,255,0.4); letter-spacing: 1px; }
+
+        /* 密码锁样式 */
+        #lock-screen { display: flex; flex-direction: column; align-items: center; }
+        #lock-screen input { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3); color: #fff; padding: 12px 20px; border-radius: 50px; font-size: 1rem; text-align: center; outline: none; width: 200px; margin: 20px 0; }
+        #lock-screen input::placeholder { color: rgba(255,255,255,0.5); }
+        #lock-screen button { background: #e94560; border: none; color: #fff; padding: 12px 40px; border-radius: 50px; font-size: 1rem; cursor: pointer; transition: background 0.3s; }
+        #lock-screen button:hover { background: #c23152; }
+        .error-msg { color: #e94560; font-size: 0.9rem; margin-top: 10px; min-height: 20px; }
+
+        /* 内容默认隐藏 */
+        #main-content { display: none; animation: fadeIn 0.5s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
-    <div class="card">
+    <div class="card" id="lock-screen">
+        <div class="avatar">🔒</div>
+        <h2>请输入密码</h2>
+        <input type="password" id="password-input" placeholder="输入密码">
+        <button onclick="checkPassword()">进入</button>
+        <div class="error-msg" id="error-msg"></div>
+    </div>
+
+    <div class="card" id="main-content">
         <div class="avatar">🚀</div>
         <h1>你的名字</h1>
         <p class="tagline">
@@ -97,5 +50,25 @@
         </div>
         <p class="footer-text">© 2026 我的小站</p>
     </div>
+
+    <script>
+        // 在这里修改密码（引号内的内容）
+        const CORRECT_PASSWORD = "2026hello";
+
+        function checkPassword() {
+            const input = document.getElementById("password-input").value;
+            if (input === CORRECT_PASSWORD) {
+                document.getElementById("lock-screen").style.display = "none";
+                document.getElementById("main-content").style.display = "block";
+            } else {
+                document.getElementById("error-msg").innerText = "密码不对，再试试看～";
+                document.getElementById("password-input").value = "";
+            }
+        }
+        // 按回车也可提交
+        document.getElementById("password-input").addEventListener("keypress", function(e) {
+            if (e.key === "Enter") checkPassword();
+        });
+    </script>
 </body>
 </html>
