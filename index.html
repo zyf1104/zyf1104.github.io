@@ -3,83 +3,365 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>我的小站</title>
+    <title>史塔克网络</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); min-height: 100vh; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; color: #ffffff; display: flex; justify-content: center; align-items: center; }
-        .card { background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); border-radius: 20px; padding: 60px 40px; text-align: center; max-width: 450px; width: 90%; box-shadow: 0 20px 50px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); }
-        .avatar { width: 100px; height: 100px; background: linear-gradient(45deg, #e94560, #f5a623); border-radius: 50%; margin: 0 auto 25px; display: flex; align-items: center; justify-content: center; font-size: 40px; box-shadow: 0 10px 30px rgba(233,69,96,0.4); }
-        h1 { font-size: 2.5rem; font-weight: 700; margin-bottom: 10px; letter-spacing: 2px; }
-        .tagline { font-size: 1.1rem; color: rgba(255,255,255,0.7); margin-bottom: 30px; line-height: 1.6; }
-        .links a { display: inline-block; margin: 0 10px; color: #fff; text-decoration: none; border: 1px solid rgba(255,255,255,0.3); padding: 10px 25px; border-radius: 50px; font-size: 0.95rem; transition: all 0.3s; }
-        .links a:hover { background: rgba(255,255,255,0.15); border-color: #fff; transform: translateY(-2px); }
-        .footer-text { margin-top: 40px; font-size: 0.8rem; color: rgba(255,255,255,0.4); letter-spacing: 1px; }
+        body {
+            background: linear-gradient(135deg, #0a0f1e 0%, #111a30 50%, #0d1525 100%);
+            min-height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+        .bg-glow {
+            position: absolute;
+            width: 300px; height: 300px;
+            border-radius: 50%;
+            filter: blur(120px);
+            opacity: 0.25;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .glow-1 { background: #4f46e5; top: -10%; left: -10%; animation: float1 20s infinite alternate; }
+        .glow-2 { background: #06b6d4; bottom: -10%; right: -5%; animation: float2 25s infinite alternate; }
+        @keyframes float1 { from { transform: translate(0,0); } to { transform: translate(50px, 60px); } }
+        @keyframes float2 { from { transform: translate(0,0); } to { transform: translate(-60px, -40px); } }
 
-        /* 登录框样式 */
-        #login-screen input { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3); color: #fff; padding: 12px 20px; border-radius: 50px; font-size: 1rem; text-align: center; outline: none; width: 200px; margin: 8px 0; display: block; margin-left: auto; margin-right: auto; }
-        #login-screen input::placeholder { color: rgba(255,255,255,0.5); }
-        #login-screen button { background: #e94560; border: none; color: #fff; padding: 12px 40px; border-radius: 50px; font-size: 1rem; cursor: pointer; transition: background 0.3s; margin-top: 15px; }
-        #login-screen button:hover { background: #c23152; }
-        .error-msg { color: #e94560; font-size: 0.9rem; margin-top: 10px; min-height: 20px; }
-        #login-screen h2 { margin-bottom: 20px; }
-        #login-screen label { display: block; text-align: left; width: 210px; margin: 5px auto 2px; font-size: 0.9rem; color: rgba(255,255,255,0.7); }
+        /* 卡片通用 */
+        .auth-card, .card {
+            background: rgba(255,255,255,0.03);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 50px 40px 45px;
+            width: 400px;
+            max-width: 90%;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.08);
+            position: relative;
+            z-index: 1;
+            animation: cardIn 0.6s ease;
+            text-align: center;
+        }
+        @keyframes cardIn { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        .card { width: 600px; }
 
-        /* 内容默认隐藏 */
-        #main-content { display: none; animation: fadeIn 0.5s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .login-header { margin-bottom: 35px; }
+        .login-logo {
+            width: 60px; height: 60px;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            border-radius: 16px;
+            display: inline-flex;
+            align-items: center; justify-content: center;
+            font-size: 28px;
+            margin-bottom: 18px;
+            box-shadow: 0 8px 25px rgba(99,102,241,0.4);
+        }
+        .login-title { font-size: 1.8rem; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 6px; color: #f1f5f9; }
+        .login-subtitle { font-size: 0.9rem; color: #94a3b8; }
+
+        .input-group { position: relative; margin-bottom: 22px; }
+        .input-icon {
+            position: absolute; left: 18px; top: 50%;
+            transform: translateY(-50%); font-size: 1.1rem; color: #64748b;
+            pointer-events: none; transition: color 0.3s;
+        }
+        .input-group input {
+            width: 100%; padding: 14px 18px 14px 48px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 14px; color: #e2e8f0; font-size: 1rem;
+            outline: none; transition: all 0.3s; letter-spacing: 0.5px;
+        }
+        .input-group input:focus {
+            border-color: #818cf8;
+            background: rgba(255,255,255,0.08);
+            box-shadow: 0 0 0 3px rgba(99,102,241,0.15);
+        }
+        .input-group input::placeholder { color: #475569; }
+
+        .btn {
+            width: 100%; padding: 14px; border: none; border-radius: 14px;
+            color: #fff; font-size: 1rem; font-weight: 600; cursor: pointer;
+            letter-spacing: 0.5px; transition: all 0.3s; margin-top: 8px;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            box-shadow: 0 8px 20px rgba(99,102,241,0.35);
+        }
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            box-shadow: 0 12px 28px rgba(99,102,241,0.5);
+            transform: translateY(-2px);
+        }
+        .btn-secondary {
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.15);
+            margin-top: 12px;
+        }
+        .btn-secondary:hover { background: rgba(255,255,255,0.15); }
+
+        .error-msg { color: #f87171; font-size: 0.85rem; text-align: center; margin-top: 15px; min-height: 20px; }
+        .toggle-link { color: #818cf8; text-decoration: none; cursor: pointer; }
+        .toggle-link:hover { text-decoration: underline; }
+        .toggle-text { margin-top: 20px; font-size: 0.85rem; color: #64748b; }
+        .logout-btn {
+            position: absolute; top: 20px; right: 20px;
+            background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3);
+            color: #fff; padding: 6px 15px; border-radius: 50px; font-size: 0.85rem;
+            cursor: pointer; transition: background 0.3s; z-index: 10;
+        }
+        .logout-btn:hover { background: rgba(255,255,255,0.2); }
+
+        /* 工作台样式 */
+        #dashboard { display: none; position: relative; }
+        #dashboard h2 { margin-bottom: 30px; }
+        .tool-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px; }
+        .tool-card { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: 15px; padding: 30px 20px; cursor: pointer; transition: all 0.3s; color: #fff; }
+        .tool-card:hover { background: rgba(255,255,255,0.15); transform: translateY(-3px); box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
+        .tool-card .icon { font-size: 2.5rem; margin-bottom: 15px; }
+        .tool-card .title { font-size: 1.2rem; font-weight: 600; margin-bottom: 8px; }
+        .tool-card .desc { font-size: 0.85rem; color: rgba(255,255,255,0.6); }
+        .tool-page { display: none; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        .back-btn { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3); color: #fff; padding: 8px 20px; border-radius: 50px; font-size: 0.9rem; cursor: pointer; margin-bottom: 25px; transition: background 0.3s; }
+        .back-btn:hover { background: rgba(255,255,255,0.2); }
+
+        @media (max-width: 450px) {
+            .auth-card, .card { padding: 40px 25px; }
+            .tool-grid { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body>
-    <!-- 登录界面 -->
-    <div class="card" id="login-screen">
-        <div class="avatar">🔐</div>
-        <h2>请登录</h2>
-        <label for="username-input">用户名</label>
-        <input type="text" id="username-input" placeholder="输入用户名">
-        <label for="password-input">密码</label>
-        <input type="password" id="password-input" placeholder="输入密码">
-        <button onclick="checkLogin()">进入</button>
-        <div class="error-msg" id="error-msg"></div>
-    </div>
+    <!-- 背景光效 -->
+    <div class="bg-glow glow-1"></div>
+    <div class="bg-glow glow-2"></div>
 
-    <!-- 主内容（登录后可见） -->
-    <div class="card" id="main-content">
-        <div class="avatar">🚀</div>
-        <h1 id="welcome-name">你好</h1>
-        <p class="tagline">
-            这里写一句自我介绍或自己喜欢的话。<br>
-            比如：探索世界的好奇心。
-        </p>
-        <div class="links">
-            <a href="#">项目</a>
-            <a href="#">联系</a>
+    <!-- 登录/注册卡片 -->
+    <div class="auth-card" id="auth-screen">
+        <div class="login-header">
+            <div class="login-logo">⚡</div>
+            <h1 class="login-title" id="auth-title">登录史塔克网络</h1>
+            <p class="login-subtitle" id="auth-subtitle">请输入您的账号信息</p>
         </div>
-        <p class="footer-text">© 2026 我的小站</p>
+
+        <!-- 注册时显示姓名输入框 -->
+        <div class="input-group" id="name-group" style="display: none;">
+            <span class="input-icon">📛</span>
+            <input type="text" id="name-input" placeholder="姓名">
+        </div>
+
+        <div class="input-group">
+            <span class="input-icon">📧</span>
+            <input type="email" id="email-input" placeholder="邮箱地址">
+        </div>
+        <div class="input-group">
+            <span class="input-icon">🔒</span>
+            <input type="password" id="password-input" placeholder="密码">
+        </div>
+
+        <button class="btn btn-primary" id="submit-btn" onclick="handleAuth()">登 录</button>
+        <div class="error-msg" id="error-msg"></div>
+
+        <div class="toggle-text">
+            <span id="toggle-prompt">还没有账号？</span>
+            <span class="toggle-link" id="toggle-link" onclick="toggleMode()">立即注册</span>
+        </div>
     </div>
 
-    <script>
-        // ====== 在这里添加用户，格式： { "用户名": "密码" } ======
-        const USERS = {
-            "Tony": "AUXzano4..@",
-            "bob": "hello2026",
-            "我": "mima"
+    <!-- 工作台首页 -->
+    <div class="card" id="dashboard">
+        <button class="logout-btn" onclick="logout()">退出登录</button>
+        <h2>我的工作台</h2>
+        <div class="tool-grid">
+            <div class="tool-card" onclick="showTool('todo')">
+                <div class="icon">📝</div>
+                <div class="title">待办清单</div>
+                <div class="desc">简单的任务列表</div>
+            </div>
+            <div class="tool-card" onclick="showTool('pomodoro')">
+                <div class="icon">🍅</div>
+                <div class="title">番茄钟</div>
+                <div class="desc">专注计时器</div>
+            </div>
+            <div class="tool-card" onclick="showTool('materials')">
+                <div class="icon">🎨</div>
+                <div class="title">素材库</div>
+                <div class="desc">常用色彩与字体</div>
+            </div>
+            <div class="tool-card">
+                <div class="icon">➕</div>
+                <div class="title">更多工具</div>
+                <div class="desc">陆续添加中</div>
+            </div>
+        </div>
+        <p style="color: rgba(255,255,255,0.5); font-size:0.8rem;">点击卡片进入工具</p>
+    </div>
+
+    <!-- 工具页面 -->
+    <div class="card tool-page" id="tool-todo">
+        <button class="back-btn" onclick="goBack()">← 返回工作台</button>
+        <h2>📝 待办清单</h2>
+        <p style="margin-top:20px; color:rgba(255,255,255,0.7);">这里很快会加上待办功能，先占个位置～</p>
+    </div>
+    <div class="card tool-page" id="tool-pomodoro">
+        <button class="back-btn" onclick="goBack()">← 返回工作台</button>
+        <h2>🍅 番茄钟</h2>
+        <p style="margin-top:20px; color:rgba(255,255,255,0.7);">25分钟工作，5分钟休息，稍后上线。</p>
+    </div>
+    <div class="card tool-page" id="tool-materials">
+        <button class="back-btn" onclick="goBack()">← 返回工作台</button>
+        <h2>🎨 素材库</h2>
+        <p style="margin-top:20px; color:rgba(255,255,255,0.7);">准备放一些好看的配色和字体，敬请期待。</p>
+    </div>
+
+    <script type="module">
+        // Firebase 配置
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDfotu2EvQ9PEpXngchbzAh4CFXoqFoX0o",
+            authDomain: "stark-net-70451.firebaseapp.com",
+            projectId: "stark-net-70451",
+            storageBucket: "stark-net-70451.firebasestorage.app",
+            messagingSenderId: "404997559309",
+            appId: "1:404997559309:web:d3b045aa591bed0880b144"
         };
 
-        function checkLogin() {
-            const username = document.getElementById("username-input").value.trim();
-            const password = document.getElementById("password-input").value;
-            if (USERS[username] && USERS[username] === password) {
-                document.getElementById("login-screen").style.display = "none";
-                document.getElementById("main-content").style.display = "block";
-                document.getElementById("welcome-name").innerText = "欢迎，" + username;
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        // 让全局函数可以访问 auth
+        window.auth = auth;
+        window.createUserWithEmailAndPassword = createUserWithEmailAndPassword;
+        window.signInWithEmailAndPassword = signInWithEmailAndPassword;
+        window.onAuthStateChanged = onAuthStateChanged;
+        window.signOut = signOut;
+    </script>
+
+    <script>
+        // 模式切换
+        let isLogin = true;
+        const authTitle = document.getElementById("auth-title");
+        const authSubtitle = document.getElementById("auth-subtitle");
+        const nameGroup = document.getElementById("name-group");
+        const submitBtn = document.getElementById("submit-btn");
+        const togglePrompt = document.getElementById("toggle-prompt");
+        const toggleLink = document.getElementById("toggle-link");
+        const errorMsg = document.getElementById("error-msg");
+
+        window.toggleMode = function() {
+            isLogin = !isLogin;
+            if (isLogin) {
+                authTitle.innerText = "登录史塔克网络";
+                authSubtitle.innerText = "请输入您的账号信息";
+                nameGroup.style.display = "none";
+                submitBtn.innerText = "登 录";
+                togglePrompt.innerText = "还没有账号？";
+                toggleLink.innerText = "立即注册";
             } else {
-                document.getElementById("error-msg").innerText = "用户名或密码不对，再试试～";
-                document.getElementById("password-input").value = "";
+                authTitle.innerText = "注册史塔克网络";
+                authSubtitle.innerText = "创建一个新账号";
+                nameGroup.style.display = "block";
+                submitBtn.innerText = "注 册";
+                togglePrompt.innerText = "已有账号？";
+                toggleLink.innerText = "立即登录";
             }
-        }
-        // 按回车也可提交
+            errorMsg.innerText = "";
+            document.getElementById("password-input").value = "";
+        };
+
+        // 认证处理
+        window.handleAuth = function() {
+            const email = document.getElementById("email-input").value.trim();
+            const password = document.getElementById("password-input").value;
+            errorMsg.innerText = "";
+
+            if (!email || !password) {
+                errorMsg.innerText = "请填写邮箱和密码";
+                return;
+            }
+
+            if (isLogin) {
+                // 登录
+                window.signInWithEmailAndPassword(window.auth, email, password)
+                    .then((userCredential) => {
+                        // 登录成功后切换到工作台
+                        document.getElementById("auth-screen").style.display = "none";
+                        document.getElementById("dashboard").style.display = "block";
+                        errorMsg.innerText = "";
+                        // 清空输入
+                        document.getElementById("email-input").value = "";
+                        document.getElementById("password-input").value = "";
+                    })
+                    .catch((error) => {
+                        errorMsg.innerText = "登录失败：" + error.message;
+                    });
+            } else {
+                // 注册
+                window.createUserWithEmailAndPassword(window.auth, email, password)
+                    .then((userCredential) => {
+                        // 注册成功直接进入工作台
+                        document.getElementById("auth-screen").style.display = "none";
+                        document.getElementById("dashboard").style.display = "block";
+                        errorMsg.innerText = "";
+                        document.getElementById("email-input").value = "";
+                        document.getElementById("password-input").value = "";
+                        document.getElementById("name-input").value = "";
+                        toggleMode(); // 切回登录模式，下次默认登录
+                    })
+                    .catch((error) => {
+                        errorMsg.innerText = "注册失败：" + error.message;
+                    });
+            }
+        };
+
+        // 退出登录
+        window.logout = function() {
+            window.signOut(window.auth).then(() => {
+                document.getElementById("dashboard").style.display = "none";
+                document.getElementById("auth-screen").style.display = "block";
+                // 隐藏所有工具页
+                document.querySelectorAll(".tool-page").forEach(p => p.style.display = "none");
+            }).catch((error) => {
+                console.error("退出失败", error);
+            });
+        };
+
+        // 监听登录状态
+        window.onAuthStateChanged(window.auth, (user) => {
+            if (user) {
+                // 已登录，显示工作台
+                document.getElementById("auth-screen").style.display = "none";
+                document.getElementById("dashboard").style.display = "block";
+            } else {
+                // 未登录
+                document.getElementById("auth-screen").style.display = "block";
+                document.getElementById("dashboard").style.display = "none";
+            }
+        });
+
+        // 工具切换
+        window.showTool = function(toolId) {
+            document.getElementById("dashboard").style.display = "none";
+            document.getElementById("tool-" + toolId).style.display = "block";
+        };
+
+        window.goBack = function() {
+            document.querySelectorAll(".tool-page").forEach(p => p.style.display = "none");
+            document.getElementById("dashboard").style.display = "block";
+        };
+
+        // 回车提交
         document.getElementById("password-input").addEventListener("keypress", function(e) {
-            if (e.key === "Enter") checkLogin();
+            if (e.key === "Enter") window.handleAuth();
+        });
+        document.getElementById("email-input").addEventListener("keypress", function(e) {
+            if (e.key === "Enter") document.getElementById("password-input").focus();
         });
     </script>
 </body>
