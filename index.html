@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self' https://media.doubao.com https://fonts.googleapis.com https://fonts.gstatic.com; img-src 'self' https://media.doubao.com data:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; script-src 'self' 'unsafe-inline'">
+<meta http-equiv="X-Content-Type-Options" content="nosniff">
 <title>Wanderlust · 全国游玩打卡指南</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✈️</text></svg>">
 <style>
@@ -137,6 +139,15 @@ body { font-family: 'Noto Sans SC', sans-serif; background: var(--bg); color: va
   user-select: none;
   position: relative;
   overflow: hidden;
+}
+html, body {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+img { -webkit-user-drag: none; user-drag: none; pointer-events: auto; }
 }
 .card:hover { box-shadow: var(--shadow-hover); transform: translateY(-2px); }
 .card.checked { background: #f0f7f3; }
@@ -459,6 +470,24 @@ function importData(e) {
 
 renderMap();
 updateProgress();
+
+/* ===== 防君子：禁用右键/查看源码/另存/图片拖拽（可被技术手段绕过，非绝对防护） ===== */
+document.addEventListener('contextmenu', function (e) { e.preventDefault(); });
+document.addEventListener('dragstart', function (e) {
+  if (e.target && e.target.tagName === 'IMG') { e.preventDefault(); }
+});
+document.addEventListener('selectstart', function (e) { e.preventDefault(); });
+document.addEventListener('keydown', function (e) {
+  var k = e.key, mod = e.ctrlKey || e.metaKey;
+  // F12 打开开发者工具
+  if (k === 'F12') { e.preventDefault(); return; }
+  // Ctrl/Cmd+U 查看源码、Ctrl/Cmd+S 另存、Ctrl/Cmd+Shift+I/J/C 开发者工具
+  if (mod && (k === 'u' || k === 'U' || k === 's' || k === 'S' || k === 'i' || k === 'I' || k === 'j' || k === 'J' || k === 'c' || k === 'C')) {
+    if (!(k === 'c' || k === 'C') || !e.shiftKey) { e.preventDefault(); }
+  }
+  // Ctrl/Cmd+Shift+I/J/C
+  if (mod && e.shiftKey && ['I','J','C'].indexOf(k) >= 0) { e.preventDefault(); }
+});
 </script>
 </body>
 </html>
